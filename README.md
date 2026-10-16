@@ -73,3 +73,21 @@ Las prácticas que necesiten varias máquinas por ejemplo, clústeres, alta disp
 ---
 
 *Laboratorio continua en evolución. Las decisiones se revisan cuando se mejore el hardware.*
+
+# infra-lab
+
+Lab de infraestructura local con KVM/libvirt.
+
+## VMs
+
+| Nombre | SO | RAM | vCPUs | Disco |
+|--------|-----|-----|-------|-------|
+| ubuntu-26.04 | Ubuntu 26.04 | 4G | 2 | 20G |
+
+## Uso rapido
+
+ISO=/var/lib/libvirt/images/ubuntu-26.04.1-live-server-amd64.iso scripts/create-vm.sh ubuntu-26.04 4096 2 20
+
+gvncviewer localhost:0
+
+sudo virsh domifaddr ubuntu-26.04   
