@@ -1,0 +1,13 @@
+.env
+.env.*
+*.retry
+*.log
+*.qcow2
+*.iso
+*.img
+*.tfstate
+*.tfstate.*
+.terraform/
+.venv/
+__pycache__/
+*.py[cod]
