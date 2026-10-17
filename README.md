@@ -90,4 +90,11 @@ ISO=/var/lib/libvirt/images/ubuntu-26.04.1-live-server-amd64.iso scripts/create-
 
 gvncviewer localhost:0
 
-sudo virsh domifaddr ubuntu-26.04   
+sudo virsh domifaddr ubuntu-26.04 
+  
+## Estado (2026-10-17)
+
+- VM ubuntu-26.04 creada e instalada
+- IP: 192.168.122.60
+- Usuario: aliciaserver
+- Pendiente: SSH no responde (revisar si OpenSSH se instaló)   
