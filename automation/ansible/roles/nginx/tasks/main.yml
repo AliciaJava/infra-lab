@@ -1,0 +1,12 @@
+---
+- name: Instalar nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Asegurar que nginx esté activo
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes   
