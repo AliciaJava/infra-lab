@@ -35,9 +35,8 @@ Ver [runbook de Ansible](docs/runbooks/ansible-setup.md).
 
 | Acción | Comando |
 |--------|---------|
-| Probar conexión | `ansible -i ~/infra-lab/ansible/inventories/hosts.yml all -m ping` |
-| Ejecutar playbook | `ansible-playbook -i ~/infra-lab/ansible/inventories/hosts.yml ~/infra-lab/ansible/playbooks/setup.yml` | 
- 
+| Probar conexión | `ansible -i ~/infra-lab/automation/ansible/inventories/hosts.yml all -m ping` |
+| Ejecutar playbook | `ansible-playbook -i ~/infra-lab/automation/ansible/inventories/hosts.yml ~/infra-lab/automation/ansible/playbooks/setup.yml`
 
 ## Estado (2026-11-20)
 
@@ -67,12 +66,15 @@ Ver [runbook de Ansible](docs/runbooks/ansible-setup.md).
 
 ## Estructura del repositorio
 
-- `ansible/`: inventarios, playbooks y roles.
-- `libvirt/`: redes, VMs y cloud-init.
+- `virtualization/kvm/`: cloud-init, redes y VMs (KVM/QEMU + libvirt).
+- `virtualization/lxd/`: contenedores de sistema (LXD).
+- `containers/`: Docker, Podman y Compose.
+- `automation/ansible/`: inventarios, playbooks y roles.
 - `networking/`: VLAN, bonding, iptables.
 - `storage/`: Ceph, iSCSI, NFS.
-- `orchestration/`: CloudStack, OpenStack.
+- `orchestration/`: CloudStack, MicroCloud, OpenStack.
 - `docs/`: runbooks, decisiones y apuntes.
+- `scripts/`: scripts utilitarios.   
 
 ## Progreso
 

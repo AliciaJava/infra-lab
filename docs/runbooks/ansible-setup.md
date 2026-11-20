@@ -6,7 +6,7 @@
 
 ## 2. Inventario
 
-Archivo: `ansible/inventories/hosts.yml`
+Archivo: `automation/ansible/inventories/hosts.yml`
 
     all:
       hosts:
@@ -17,34 +17,18 @@ Archivo: `ansible/inventories/hosts.yml`
 
 ## 3. Playbook
 
-Archivo: `ansible/playbooks/setup.yml`
+Archivo: `automation/ansible/playbooks/setup.yml`
 
 Instala `curl`, `nginx` y `htop` en la VM.
 
 ## 4. Probar conexión
 
-    ansible -i ~/infra-lab/ansible/inventories/hosts.yml all -m ping
+    ansible -i ~/infra-lab/automation/ansible/inventories/hosts.yml all -m ping
 
 ## 5. Ejecutar playbook
 
-    ansible-playbook -i ~/infra-lab/ansible/inventories/hosts.yml ~/infra-lab/ansible/playbooks/setup.yml
+    ansible-playbook -i ~/infra-lab/automation/ansible/inventories/hosts.yml ~/infra-lab/automation/ansible/playbooks/setup.yml
 
 ## 6. Verificar
 
     curl http://<ip>   
-
-## Ansible
-
-- **Inventario:** `ansible/inventories/hosts.yml`
-- **Playbooks:** `ansible/playbooks/`
-- **Runbook:** `docs/runbooks/ansible-setup.md`
-
-### Comandos
-
-    ansible -i ~/infra-lab/ansible/inventories/hosts.yml all -m ping
-    ansible-playbook -i ~/infra-lab/ansible/inventories/hosts.yml ~/infra-lab/ansible/playbooks/setup.yml   
-
-
-- [x] Ansible instalado en el host
-- [x] Nginx desplegado en la VM vía playbook   
-
