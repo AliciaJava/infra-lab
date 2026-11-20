@@ -64,6 +64,8 @@ Ver [runbook de Ansible](docs/runbooks/ansible-setup.md).
 - **VLAN, bonding, Ceph, OpenStack:** aplazados hasta tener nodos o caso de uso claro.
 - **No guardar imágenes de VM ni secretos en Git.**
 
+Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).   
+
 ## Estructura del repositorio
 
 - `virtualization/kvm/`: cloud-init, redes y VMs (KVM/QEMU + libvirt).
