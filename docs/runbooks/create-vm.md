@@ -1,36 +1,51 @@
-# Runbook: Crear y instalar VM Ubuntu Server
+# Runbook: Crear VM Ubuntu con cloud-init
 
-## 1. Descargar ISO
+## 1. Descargar cloud image
 
-cd ~/Descargas
-wget -c https://releases.ubuntu.com/resolute/ubuntu-26.04.1-live-server-amd64.iso
-wget -c https://releases.ubuntu.com/resolute/SHA256SUMS
-sha256sum -c SHA256SUMS --ignore-missing
+    cd ~/Descargas
+    wget -c https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+    sudo cp noble-server-cloudimg-amd64.img /var/lib/libvirt/images/
 
-## 2. Copiar al pool de libvirt
+## 2. Crear user-data
 
-sudo cp ~/Descargas/ubuntu-26.04.1-live-server-amd64.iso /var/lib/libvirt/images/
+Archivo: `virtualization/kvm/cloud-init/<nombre>-user-data.yaml`
+
+    #cloud-config
+    users:
+      - name: aliciaserver
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        ssh_authorized_keys:
+          - <clave_publica>
+    packages:
+      - openssh-server
+      - qemu-guest-agent
+    runcmd:
+      - systemctl enable --now ssh
+      - systemctl enable --now qemu-guest-agent
 
 ## 3. Crear la VM
 
-ISO=/var/lib/libvirt/images/ubuntu-26.04.1-live-server-amd64.iso scripts/create-vm.sh ubuntu-26.04 4096 2 20
+    sudo virt-install \
+      --name <nombre> \
+      --ram 4096 \
+      --vcpus 2 \
+      --disk path=/var/lib/libvirt/images/<nombre>.qcow2,size=20,backing_store=/var/lib/libvirt/images/noble-server-cloudimg-amd64.img \
+      --cloud-init user-data="$HOME/infra-lab/virtualization/kvm/cloud-init/<nombre>-user-data.yaml" \
+      --os-variant ubuntu24.04 \
+      --network network=default \
+      --graphics vnc,listen=0.0.0.0 \
+      --noautoconsole
 
-## 4. Conectar VNC
+## 4. Conectar
 
-gvncviewer localhost:0
+    sleep 15
+    sudo virsh domifaddr <nombre>
+    ssh aliciaserver@<ip>
 
-## 5. Instalador (Subiquity)
+## Notas
 
-- Idioma: Español
-- Teclado: Español (es)
-- Red: Default (NAT)
-- Nombre: ubuntu-26.04
-- Usuario: alicia
-- Particionado: Usar disco completo
-- SSH: Instalar OpenSSH
+- La VM arranca en ~10s con SSH ya activo. No requiere VNC ni consola.
+- Si la IP no aparece a los 15s, espera más (cloud-init tarda al primer arranque).
+- Alternativa para ver la IP: `sudo virsh net-dhcp-leases default`   
 
-## 6. Post-instalacion
-
-sudo virsh reboot ubuntu-26.04
-sudo virsh domifaddr ubuntu-26.04
-ssh alicia@192.168.122.x   
+  
