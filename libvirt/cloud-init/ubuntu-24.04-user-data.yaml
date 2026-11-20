@@ -1,0 +1,12 @@
+#cloud-config
+users:
+  - name: aliciaserver
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHe8tGw79+SZq4mw3+NraxkezCHh+tyoZDOXG/HTFa30 Aliciaortega1986@gmail.com
+packages:
+  - openssh-server
+  - qemu-guest-agent
+runcmd:
+  - systemctl enable --now ssh
+  - systemctl enable --now qemu-guest-agent
