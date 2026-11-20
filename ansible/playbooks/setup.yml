@@ -1,0 +1,19 @@
+---
+- name: Setup inicial de la VM
+  hosts: all
+  become: yes
+  tasks:
+    - name: Instalar paquetes básicos
+      apt:
+        name:
+          - curl
+          - nginx
+          - htop
+        state: present
+        update_cache: yes
+
+    - name: Asegurar que nginx esté activo
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes

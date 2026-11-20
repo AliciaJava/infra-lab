@@ -2,9 +2,7 @@
 
 **Laboratorio personal de infraestructura, virtualización y automatización.**
 
-Este repositorio documenta y versiona las prácticas del laboratorio. La prioridad es avanzar de forma gradual: primero un host sencillo y estable; después, máquinas virtuales y servicios aislados; finalmente, prácticas que necesiten varios nodos.
-
-> 🖥️ **Equipo actual:** Ubuntu 24 · 12 GB de RAM · SSD de 256 GB  
+> 🖥️ **Equipo actual:** Ubuntu 24 · 12 GB de RAM · SSD de 256 GB
 > 🧭 **Enfoque:** Probar y documentar, no es un entorno de producción.
 
 ## Objetivos
@@ -15,85 +13,44 @@ Este repositorio documenta y versiona las prácticas del laboratorio. La priorid
 - Aprender redes y almacenamiento mediante ejercicios pequeños.
 - Documentar decisiones, comandos y resultados para poder repetirlos.
 
-## Hardware y decisiones técnicas
-
-| Recurso | Situación actual | Decisión para el laboratorio |
-| --- | --- | --- |
-| Memoria | 12 GB de RAM | Mantener margen para Ubuntu. Empezar con una o dos VMs ligeras y limitar su memoria conjunta a unos 6–7 GB como referencia inicial. |
-| Almacenamiento | SSD de 256 GB | Controlar el espacio de discos virtuales e imágenes. Usar discos de tamaño dinámico cuando corresponda y dejar espacio libre para el sistema. |
-| CPU | Pendiente de documentar | Comprobar modelo, núcleos y soporte de virtualización antes de planificar cargas mayores. |
-| Red física | Pendiente de documentar | Empezar con la red NAT predeterminada de libvirt. Crear puentes o VLAN solo cuando haya una necesidad concreta. |
-
-Las cifras anteriores son un punto de partida, no una garantía de rendimiento. Se revisarán según el uso real del host y de las VMs.
-
-## Qué se ejecuta en cada sitio
-
-### En el host Ubuntu
-
-- Git y este repositorio.
-- Ansible para automatizar tareas del laboratorio.
-- KVM/libvirt para administrar máquinas virtuales.
-- Herramientas de diagnóstico y documentación.
-
-### Dentro de máquinas virtuales
-
-- Servicios y sistemas que se quieran probar de forma aislada.
-- Ejercicios de Ansible contra otros equipos.
-- Prácticas que puedan modificar configuraciones sin afectar directamente al host.
-
-### En nodos futuros
-
-Las prácticas que necesiten varias máquinas por ejemplo, clústeres, alta disponibilidad o pruebas realistas de almacenamiento distribuido— se dejarán para cuando haya nodos adicionales disponibles.
-
-## Decisiones y límites actuales
-
-- **Empezar por libvirt y VMs pequeñas:** permite aprender virtualización sin desplegar desde el primer día una plataforma completa.
-- **Usar NAT al principio:** es una opción sencilla para que las VMs tengan conectividad sin cambiar la configuración de la red física.
-- **Dejar VLAN y bonding para más adelante:** se añadirán cuando haya un caso de uso claro; bonding requiere varias interfaces físicas.
-- **Aplazar Ceph y OpenStack como despliegues de varios nodos:** con un solo host y 12 GB de RAM, no son el primer objetivo práctico. Se pueden estudiar más adelante, con expectativas y recursos adecuados.
-- **No guardar imágenes de VM ni secretos en Git:** el repositorio contiene configuraciones y documentación, no discos virtuales, claves privadas, contraseñas o tokens.
-
-## Estructura del repositorio
-
-- `ansible/`: inventarios, playbooks y roles.
-- `libvirt/`: redes, máquinas virtuales y archivos de cloud-init.
-- `networking/`: prácticas de VLAN, bonding e iptables.
-- `storage/`: documentación y pruebas de almacenamiento.
-- `orchestration/`: notas y pruebas futuras con plataformas de orquestación.
-- `docs/`: procedimientos, decisiones y apuntes.
-
-## Progreso
-
-- [ ] Preparar el host para KVM/libvirt.
-- [ ] Crear la primera máquina virtual.
-- [ ] Automatizar una tarea sencilla con Ansible.
-- [ ] Documentar la red y el almacenamiento disponibles.
-- [ ] Ampliar el laboratorio cuando haya nuevos requisitos o nodos.
-
----
-
-*Laboratorio continua en evolución. Las decisiones se revisan cuando se mejore el hardware.*
-
-# infra-lab
-
-Lab de infraestructura local con KVM/libvirt.
-
 ## VMs
 
 | Nombre | SO | RAM | vCPUs | Disco |
 |--------|-----|-----|-------|-------|
-| ubuntu-26.04 | Ubuntu 26.04 | 4G | 2 | 20G |
+| ubuntu-24.04 | Ubuntu 24.04 LTS | 4G | 2 | 20G |
 
 ## Uso rápido
 
 ```bash
+# Crear VM (ver docs/runbooks/create-vm.md)
 sudo virt-install \
   --name <nombre> \
-  ...
+  --ram 4096 \
+  --vcpus 2 \
+  --disk path=/var/lib/libvirt/images/<nombre>.qcow2,size=20,backing_store=/var/lib/libvirt/images/noble-server-cloudimg-amd64.img \
+  --cloud-init user-data="$HOME/infra-lab/libvirt/cloud-init/<nombre>-user-data.yaml" \
+  --os-variant ubuntu24.04 \
+  --network network=default \
+  --graphics vnc,listen=0.0.0.0 \
   --noautoconsole
 
+# Conectar
 sudo virsh domifaddr <nombre>
 ssh aliciaserver@<ip>
+```
+
+## Ansible
+
+- **Inventario:** `ansible/inventories/hosts.yml`
+- **Playbooks:** `ansible/playbooks/`
+- **Runbook:** `docs/runbooks/ansible-setup.md`
+
+```bash
+# Probar conexión
+ansible -i ~/infra-lab/ansible/inventories/hosts.yml all -m ping
+
+# Ejecutar playbook
+ansible-playbook -i ~/infra-lab/ansible/inventories/hosts.yml ~/infra-lab/ansible/playbooks/setup.yml
 ```
 
 ## Estado (2026-11-20)
@@ -103,4 +60,41 @@ ssh aliciaserver@<ip>
 - Usuario: aliciaserver
 - SSH operativo
 - Kernel: 6.8.0-151-generic
-- Runbook: `docs/runbooks/create-vm.md`   
+- Ansible instalado en el host
+- Nginx desplegado en la VM vía playbook
+
+## Hardware y decisiones técnicas
+
+| Recurso | Situación actual | Decisión |
+| --- | --- | --- |
+| Memoria | 12 GB de RAM | Limitar VMs a 6–7 GB conjuntos |
+| Almacenamiento | SSD de 256 GB | Discos dinámicos, control de espacio |
+| CPU | Pendiente de documentar | Comprobar virtualización antes de cargar |
+| Red física | Pendiente de documentar | NAT de libvirt; bridge/VLAN solo con necesidad |
+
+## Decisiones
+
+- **Cloud-init + cloud image** para crear VMs (reproducible, sin instalador interactivo).
+- **NAT al principio:** conectividad sin tocar la red física.
+- **VLAN, bonding, Ceph, OpenStack:** aplazados hasta tener nodos o caso de uso claro.
+- **No guardar imágenes de VM ni secretos en Git.**
+
+## Estructura del repositorio
+
+- `ansible/`: inventarios, playbooks y roles.
+- `libvirt/`: redes, VMs y cloud-init.
+- `networking/`: VLAN, bonding, iptables.
+- `storage/`: Ceph, iSCSI, NFS.
+- `orchestration/`: CloudStack, OpenStack.
+- `docs/`: runbooks, decisiones y apuntes.
+
+## Progreso
+
+- [x] Preparar el host para KVM/libvirt
+- [x] Crear la primera VM (cloud-init)
+- [x] SSH operativo en la VM
+- [x] Ansible instalado y primer playbook (nginx)
+- [ ] Documentar CPU y red física
+- [ ] Segunda VM / multi-nodo
+- [ ] Red aislada o bridge
+- [ ] Ampliar el laboratorio   
