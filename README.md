@@ -87,26 +87,20 @@ Lab de infraestructura local con KVM/libvirt.
 ## Uso rápido
 
 ```bash
-# Crear VM con cloud-init (ver docs/runbooks/create-vm.md)
 sudo virt-install \
   --name <nombre> \
-  --ram 4096 \
-  --vcpus 2 \
-  --disk path=/var/lib/libvirt/images/<nombre>.qcow2,size=20,backing_store=/var/lib/libvirt/images/noble-server-cloudimg-amd64.img \
-  --cloud-init user-data="$HOME/infra-lab/libvirt/cloud-init/<nombre>-user-data.yaml" \
-  --os-variant ubuntu24.04 \
-  --network network=default \
-  --graphics vnc,listen=0.0.0.0 \
+  ...
   --noautoconsole
 
-# Conectar
 sudo virsh domifaddr <nombre>
-ssh aliciaserver@<ip>      
+ssh aliciaserver@<ip>
+```
 
-Estado (2026-11-20)
-VM ubuntu-24.04 creada con cloud image + cloud-init
-IP: asignada por DHCP en la red NAT de libvirt   
-Usuario: aliciaserver
-SSH operativo
-Kernel: 6.8.0-151-generic
-Runbook: docs/runbooks/create-vm.md
+## Estado (2026-11-20)
+
+- VM `ubuntu-24.04` creada con cloud image + cloud-init
+- IP: asignada por DHCP en la red NAT de libvirt
+- Usuario: aliciaserver
+- SSH operativo
+- Kernel: 6.8.0-151-generic
+- Runbook: `docs/runbooks/create-vm.md`   
