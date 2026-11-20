@@ -21,37 +21,23 @@
 
 ## Uso rápido
 
-```bash
-# Crear VM (ver docs/runbooks/create-vm.md)
-sudo virt-install \
-  --name <nombre> \
-  --ram 4096 \
-  --vcpus 2 \
-  --disk path=/var/lib/libvirt/images/<nombre>.qcow2,size=20,backing_store=/var/lib/libvirt/images/noble-server-cloudimg-amd64.img \
-  --cloud-init user-data="$HOME/infra-lab/libvirt/cloud-init/<nombre>-user-data.yaml" \
-  --os-variant ubuntu24.04 \
-  --network network=default \
-  --graphics vnc,listen=0.0.0.0 \
-  --noautoconsole
+Ver [runbook de creación de VMs](docs/runbooks/create-vm.md).
 
-# Conectar
-sudo virsh domifaddr <nombre>
-ssh aliciaserver@<ip>
-```
+| Acción | Comando |
+|--------|---------|
+| Crear VM | `sudo virt-install --name <nombre> --ram 4096 --vcpus 2 ...` |
+| Ver IP | `sudo virsh domifaddr <nombre>` |
+| Conectar | `ssh aliciaserver@<ip>` |
 
 ## Ansible
 
-- **Inventario:** `ansible/inventories/hosts.yml`
-- **Playbooks:** `ansible/playbooks/`
-- **Runbook:** `docs/runbooks/ansible-setup.md`
+Ver [runbook de Ansible](docs/runbooks/ansible-setup.md).
 
-```bash
-# Probar conexión
-ansible -i ~/infra-lab/ansible/inventories/hosts.yml all -m ping
-
-# Ejecutar playbook
-ansible-playbook -i ~/infra-lab/ansible/inventories/hosts.yml ~/infra-lab/ansible/playbooks/setup.yml
-```
+| Acción | Comando |
+|--------|---------|
+| Probar conexión | `ansible -i ~/infra-lab/ansible/inventories/hosts.yml all -m ping` |
+| Ejecutar playbook | `ansible-playbook -i ~/infra-lab/ansible/inventories/hosts.yml ~/infra-lab/ansible/playbooks/setup.yml` | 
+ 
 
 ## Estado (2026-11-20)
 
