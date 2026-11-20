@@ -84,17 +84,29 @@ Lab de infraestructura local con KVM/libvirt.
 |--------|-----|-----|-------|-------|
 | ubuntu-26.04 | Ubuntu 26.04 | 4G | 2 | 20G |
 
-## Uso rapido
+## Uso rápido
 
-ISO=/var/lib/libvirt/images/ubuntu-26.04.1-live-server-amd64.iso scripts/create-vm.sh ubuntu-26.04 4096 2 20
+```bash
+# Crear VM con cloud-init (ver docs/runbooks/create-vm.md)
+sudo virt-install \
+  --name <nombre> \
+  --ram 4096 \
+  --vcpus 2 \
+  --disk path=/var/lib/libvirt/images/<nombre>.qcow2,size=20,backing_store=/var/lib/libvirt/images/noble-server-cloudimg-amd64.img \
+  --cloud-init user-data="$HOME/infra-lab/libvirt/cloud-init/<nombre>-user-data.yaml" \
+  --os-variant ubuntu24.04 \
+  --network network=default \
+  --graphics vnc,listen=0.0.0.0 \
+  --noautoconsole
 
-gvncviewer localhost:0
+# Conectar
+sudo virsh domifaddr <nombre>
+ssh aliciaserver@<ip>      
 
-sudo virsh domifaddr ubuntu-26.04 
-  
-## Estado (2026-10-17)
-
-- VM ubuntu-26.04 creada e instalada
-- IP: 192.168.122.60
-- Usuario: aliciaserver
-- Pendiente: SSH no responde (revisar si OpenSSH se instaló)   
+Estado (2026-11-20)
+VM ubuntu-24.04 creada con cloud image + cloud-init
+IP: asignada por DHCP en la red NAT de libvirt   
+Usuario: aliciaserver
+SSH operativo
+Kernel: 6.8.0-151-generic
+Runbook: docs/runbooks/create-vm.md
