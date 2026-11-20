@@ -82,7 +82,10 @@ Ver [runbook de Ansible](docs/runbooks/ansible-setup.md).
 - [x] Crear la primera VM (cloud-init)
 - [x] SSH operativo en la VM
 - [x] Ansible instalado y primer playbook (nginx)
-- [ ] Documentar CPU y red física
+- [x] Role nginx reutilizable
+- [x] Documentar CPU y red física
+- [x] LXD instalado y primer contenedor
+- [ ] Docker / contenedores
 - [ ] Segunda VM / multi-nodo
 - [ ] Red aislada o bridge
-- [ ] Ampliar el laboratorio   
+- [ ] Ampliar el laboratorio      
