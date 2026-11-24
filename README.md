@@ -1,9 +1,9 @@
-# 🧪 infra-lab
+# infra-lab
 
 **Laboratorio personal de infraestructura, virtualización y automatización.**
 
-> 🖥️ **Equipo actual:** Ubuntu 24 · 12 GB de RAM · SSD de 256 GB
-> 🧭 **Enfoque:** Probar y documentar, no es un entorno de producción.
+> **Equipo actual:** Ubuntu 24 · 12 GB de RAM · SSD de 256 GB.
+> **Enfoque:** Probar y documentar, no es un entorno de producción.
 
 ## Objetivos
 
@@ -66,9 +66,6 @@ Ver [runbook de Ansible](docs/runbooks/ansible-setup.md).
 
 
 ---
-
-
-
    
 Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).   
 
@@ -85,6 +82,13 @@ Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).
 - `scripts/`: scripts utilitarios.   
 
 ## Progreso
+
+## Troubleshooting
+
+- [QEMU: Consola gráfica no funcional bajo Wayland](docs/troubleshooting/qemu-wayland-vnc.md)
+
+
+## Troubleshooting
 
 - [x] Preparar el host para KVM/libvirt
 - [x] Crear la primera VM (cloud-init)
