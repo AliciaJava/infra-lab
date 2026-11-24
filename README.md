@@ -87,8 +87,7 @@ Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).
 
 - [QEMU: Consola gráfica no funcional bajo Wayland](docs/troubleshooting/qemu-wayland-vnc.md)
 
-
-## Troubleshooting
+## Progreso
 
 - [x] Preparar el host para KVM/libvirt
 - [x] Crear la primera VM (cloud-init)
@@ -100,4 +99,4 @@ Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).
 - [ ] Docker / contenedores
 - [ ] Segunda VM / multi-nodo
 - [ ] Red aislada o bridge
-- [ ] Ampliar el laboratorio      
+- [ ] Ampliar el laboratorio        

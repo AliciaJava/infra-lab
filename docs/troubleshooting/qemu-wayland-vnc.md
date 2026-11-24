@@ -4,9 +4,10 @@
 
 La consola gráfica de QEMU (SDL/SPICE) no se renderiza al iniciar la VM
 en Ubuntu 24.04. La ventana no aparece, queda congelada o lanza:
-   
-qemu-system-x86_64: -display spice: SPICE support is disabled
 
+```
+qemu-system-x86_64: -display spice: SPICE support is disabled
+```
 
 ## Causa raíz
 
@@ -38,22 +39,31 @@ qemu-system-x86_64 \
   -device virtio-net-pci,netdev=net0 \
   -vnc :0 \
   -daemonize \
-  -pidfile /tmp/vm.pid   
+  -pidfile /tmp/vm.pid
+```
 
 Conexión:
 
+```bash
 # tigervnc-viewer
 vncviewer localhost:0
 
 # o virt-viewer (libvirt)
-virt-viewer --connect qemu:///system <nombre-vm>   
+virt-viewer --connect qemu:///system <nombre-vm>
+```
 
-localhost:0 → 127.0.0.1:5900. El display :N mapea al puerto 5900+N.
+> `localhost:0` → `127.0.0.1:5900`. El display `:N` mapea al puerto `5900+N`.
 
-Referencias
+## Verificación
 
-QEMU Documentation — VNC
-QEMU Issue #2048 — SDL under Wayland
-SDL Issue #11603 — Wayland video driver
-ArchWiki — QEMU / VNC
+```bash
+ss -tlnp | grep 5900
+# LISTEN 0 1 127.0.0.1:5900 0.0.0.0:* users:(("qemu-system-x86",pid=XXXX,fd=XX))
+```
 
+## Referencias
+
+- [QEMU Documentation — VNC](https://www.qemu.org/docs/master/system/invocation.html)
+- [QEMU Issue #2048 — SDL under Wayland](https://gitlab.com/qemu-project/qemu/-/issues/2048)
+- [SDL Issue #11603 — Wayland video driver](https://github.com/libsdl-org/SDL/issues/11603)
+- [ArchWiki — QEMU / VNC](https://wiki.archlinux.org/title/QEMU#VNC)   
