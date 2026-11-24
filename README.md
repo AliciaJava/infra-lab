@@ -61,9 +61,15 @@ Ver [runbook de Ansible](docs/runbooks/ansible-setup.md).
 
 - **Cloud-init + cloud image** para crear VMs (reproducible, sin instalador interactivo).
 - **NAT al principio:** conectividad sin tocar la red física.
-- **VLAN, bonding, Ceph, OpenStack:** aplazados hasta tener nodos o caso de uso claro.
+ **VLAN, bonding, Ceph, OpenStack:** aplazados hasta tener nodos o caso de uso claro.
 - **No guardar imágenes de VM ni secretos en Git.**
 
+
+---
+
+
+
+   
 Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).   
 
 ## Estructura del repositorio
