@@ -96,7 +96,7 @@ Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).
 - [x] Role nginx reutilizable
 - [x] Documentar CPU y red física
 - [x] LXD instalado y primer contenedor
-- [ ] Docker / contenedores
+- [x] Docker / contenedores
 - [ ] Segunda VM / multi-nodo
 - [ ] Red aislada o bridge
 - [ ] Ampliar el laboratorio        
