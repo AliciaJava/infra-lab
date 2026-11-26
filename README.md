@@ -65,24 +65,20 @@ Ver [runbook de Ansible](docs/runbooks/ansible-setup.md).
  **VLAN, bonding, Ceph, OpenStack:** aplazados hasta tener nodos o caso de uso claro.
 - **No guardar imágenes de VM ni secretos en Git.**
 
-
----
-   
+---   
 Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).   
 
 ## Estructura del repositorio
 
 - `virtualization/kvm/`: cloud-init, redes y VMs (KVM/QEMU + libvirt).
 - `virtualization/lxd/`: contenedores de sistema (LXD).
-- `containers/`: Docker, Podman y Compose.
+- `containers/`: Docker Compose.
 - `automation/ansible/`: inventarios, playbooks y roles.
 - `networking/`: VLAN, bonding, iptables.
 - `storage/`: Ceph, iSCSI, NFS.
 - `orchestration/`: CloudStack, MicroCloud, OpenStack.
 - `docs/`: runbooks, decisiones y apuntes.
 - `scripts/`: scripts utilitarios.   
-
-## Progreso
 
 ## Troubleshooting
 
@@ -91,42 +87,39 @@ Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).
 
 ### Segunda VM: disco vacío y cloud-init sin inyectar clave SSH
 
-**Síntoma:** VM arranca pero no hay SO en consola; SSH da `Permission denied (publickey)`.
-
 **Causa 1 — Disco vacío:**
 
 `--disk path=...,size=10` crea un disco en blanco, no copia la cloud image.
 
-**Solución:**
+**Solución:** Usar la cloud image directamente como disco:
 
-Usar la cloud image directamente como disco:
+    sudo cp noble-server-cloudimg-amd64.img ubuntu-24.04-node2.img
+    sudo virt-install \
+      --name ubuntu-24.04-node2 \
+      --ram 2048 \
+      --vcpus 1 \
+      --disk path=/var/lib/libvirt/images/ubuntu-24.04-node2.img,format=raw \
+      --network network=default \
+      --os-variant ubuntu24.04 \
+      --import \
+      --noautoconsole
 
-```bash
-sudo cp noble-server-cloudimg-amd64.img ubuntu-24.04-node2.img
-sudo virt-install \
-  --name ubuntu-24.04-node2 \
-  --ram 2048 \
-  --vcpus 1 \
-  --disk path=/var/lib/libvirt/images/ubuntu-24.04-node2.img,format=raw \
-  --network network=default \
-  --os-variant ubuntu24.04 \
-  --import \
-  --noautoconsole   
+**Causa 2 — Cloud-init no inyecta `ssh_authorized_keys`:**
 
-Causa 2 — Cloud-init no inyecta ssh_authorized_keys: El usuario se crea pero la clave no llega a authorized_keys.
+El usuario se crea pero la clave no llega a `authorized_keys`.
 
-Solución: Inyectar la clave con virt-customize antes de arrancar:
+**Solución:** Inyectar la clave con `virt-customize` antes de arrancar:
 
-sudo virsh destroy ubuntu-24.04-node2
-sudo virt-customize -a /var/lib/libvirt/images/ubuntu-24.04-node2.img \
-  --run-command "mkdir -p /home/aliciaserver/.ssh" \
-  --run-command "echo 'ssh-ed25519 <clave-publica>' > /home/aliciaserver/.ssh/authorized_keys" \
-  --run-command "chown -R aliciaserver:aliciaserver /home/aliciaserver/.ssh" \
-  --run-command "chmod 700 /home/aliciaserver/.ssh" \
-  --run-command "chmod 600 /home/aliciaserver/.ssh/authorized_keys"
-sudo virsh start ubuntu-24.04-node2   
+    sudo virsh destroy ubuntu-24.04-node2
+    sudo virt-customize -a /var/lib/libvirt/images/ubuntu-24.04-node2.img \
+      --run-command "mkdir -p /home/aliciaserver/.ssh" \
+      --run-command "echo 'ssh-ed25519 <clave-publica>' > /home/aliciaserver/.ssh/authorized_keys" \
+      --run-command "chown -R aliciaserver:aliciaserver /home/aliciaserver/.ssh" \
+      --run-command "chmod 700 /home/aliciaserver/.ssh" \
+      --run-command "chmod 600 /home/aliciaserver/.ssh/authorized_keys"
+    sudo virsh start ubuntu-24.04-node2
 
-Nota: Si el usuario ya existe (creado por cloud-init), omitir useradd — da error.
+**Nota:** Si el usuario ya existe (creado por cloud-init), omitir `useradd` — da error.   
 
 ## Progreso
 
