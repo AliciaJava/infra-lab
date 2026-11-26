@@ -85,8 +85,6 @@ Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).
 - [QEMU: Consola gráfica no funcional bajo Wayland](docs/troubleshooting/qemu-wayland-vnc.md)
 - [Segunda VM: disco vacío y cloud-init sin inyectar clave SSH](#segunda-vm-disco-vacío-y-cloud-init-sin-inyectar-clave-ssh)
 
-### Segunda VM: disco vacío y cloud-init sin inyectar clave
-
 ### Segunda VM: disco vacío y cloud-init sin inyectar clave SSH
 
 **Causa 1 — Disco vacío:**
@@ -95,17 +93,16 @@ Ver [decisiones técnicas completas](docs/decisions/tech-choices.md).
 
 **Solución:** Usar la cloud image directamente como disco:
 
-```bash
-sudo cp noble-server-cloudimg-amd64.img ubuntu-24.04-node2.img
-sudo virt-install \
-  --name ubuntu-24.04-node2 \
-  --ram 2048 \
-  --vcpus 1 \
-  --disk path=/var/lib/libvirt/images/ubuntu-24.04-node2.img,format=raw \
-  --network network=default \
-  --os-variant ubuntu24.04 \
-  --import \
-  --noautoconsole   
+    sudo cp noble-server-cloudimg-amd64.img ubuntu-24.04-node2.img
+    sudo virt-install \
+      --name ubuntu-24.04-node2 \
+      --ram 2048 \
+      --vcpus 1 \
+      --disk path=/var/lib/libvirt/images/ubuntu-24.04-node2.img,format=raw \
+      --network network=default \
+      --os-variant ubuntu24.04 \
+      --import \
+      --noautoconsole
 
 **Causa 2 — Cloud-init no inyecta `ssh_authorized_keys`:**
 
@@ -113,15 +110,16 @@ El usuario se crea pero la clave no llega a `authorized_keys`.
 
 **Solución:** Inyectar la clave con `virt-customize` antes de arrancar:
 
-```bash
-sudo virsh destroy ubuntu-24.04-node2
-sudo virt-customize -a /var/lib/libvirt/images/ubuntu-24.04-node2.img \
-  --run-command "mkdir -p /home/aliciaserver/.ssh" \
-  --run-command "echo 'ssh-ed25519 <clave-publica>' > /home/aliciaserver/.ssh/authorized_keys" \
-  --run-command "chown -R aliciaserver:aliciaserver /home/aliciaserver/.ssh" \
-  --run-command "chmod 700 /home/aliciaserver/.ssh" \
-  --run-command "chmod 600 /home/aliciaserver/.ssh/authorized_keys"
-sudo virsh start ubuntu-24.04-node2   
+    sudo virsh destroy ubuntu-24.04-node2
+    sudo virt-customize -a /var/lib/libvirt/images/ubuntu-24.04-node2.img \
+      --run-command "mkdir -p /home/aliciaserver/.ssh" \
+      --run-command "echo 'ssh-ed25519 <clave-publica>' > /home/aliciaserver/.ssh/authorized_keys" \
+      --run-command "chown -R aliciaserver:aliciaserver /home/aliciaserver/.ssh" \
+      --run-command "chmod 700 /home/aliciaserver/.ssh" \
+      --run-command "chmod 600 /home/aliciaserver/.ssh/authorized_keys"
+    sudo virsh start ubuntu-24.04-node2
+
+**Nota:** Si el usuario ya existe (creado por cloud-init), omitir `useradd` — da error.   
 
 ## Progreso
 
